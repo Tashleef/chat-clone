@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Socket.io Chat Example</title>
+    </head>
+    <body>
+        <h1>Chat Example</h1>
+
+        <form id="chat-form">
+            <input
+                type="text"
+                id="username"
+                placeholder="Enter username"
+                required
+            />
+            <input
+                type="text"
+                id="message"
+                placeholder="Enter message"
+                required
+            />
+            <button type="submit">Send</button>
+        </form>
+
+        <ul id="chat-messages"></ul>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io();
+
+            // Form submit event handler
+            document
+                .getElementById("chat-form")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+
+                    // Get username and message from form
+                    const username = document.getElementById("username").value;
+                    const message = document.getElementById("message").value;
+
+                    // Emit chat message to the server
+                    socket.emit("chatMessage", {username, message});
+
+                    // Clear form input
+                    document.getElementById("message").value = "";
+                });
+
+            // Listen for chat message event from the server
+            socket.on("chatMessage", (data) => {
+                // Create a new list item to display the message
+                const listItem = document.createElement("li");
+                listItem.textContent = `${data.username}: ${data.message}`;
+
+                // Append the list item to the chat messages list
+                document.getElementById("chat-messages").appendChild(listItem);
+            });
+        </script>
+    </body>
+</html>

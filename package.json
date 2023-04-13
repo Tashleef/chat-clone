@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/Tashleef/chat-clone/issues"
   },
-  "homepage": "https://github.com/Tashleef/chat-clone#readme"
+  "homepage": "https://github.com/Tashleef/chat-clone#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22",
+    "sequelize": "^6.31.0",
+    "socket-io": "^1.0.0",
+    "socket.io": "^4.6.1"
+  }
 }
