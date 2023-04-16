@@ -3,18 +3,23 @@ const { formateMessage } = require("./structure/message");
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-const { getAllUsers, addUser } = require("./structure/user");
+const {
+	getAllUsers,
+	addUser,
+	deleteUser,
+	findUser,
+} = require("./structure/user");
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
 	console.log("Connected");
 	socket.on("joinRoom", ({ username, room }) => {
 		socket.join(room);
-		addUser({ username });
-		let users = getAllUsers();
+		const id = socket.id;
+		addUser({ id, username, room });
+		let users = getAllUsers({ room });
 		io.to(room).emit("roomUsers", { room, users });
 		socket.on("chatMessage", (msg) => {
-			console.log(msg);
 			io.to(room).emit(
 				"message",
 				formateMessage({
@@ -33,6 +38,19 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("disconnect", () => {
+		const user = deleteUser({ id: socket.id });
+		if (!user) return;
+		const { room, username } = user;
+		io.to(room).emit(
+			"message",
+			formateMessage({
+				username: "Chat",
+				text: `${username} left the chat`,
+			})
+		);
+		const users = getAllUsers({ room });
+		io.to(user.room).emit("roomUsers", { room, users });
+
 		console.log("Disconnected");
 	});
 });
