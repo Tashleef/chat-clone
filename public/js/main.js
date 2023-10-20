@@ -2,19 +2,19 @@ const chatForm = document.getElementById("chat-form");
 const chatMessages = document.querySelector(".chat-messages");
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
-
+var aeskey = "bQeThWmZq4t7w!z%C*F-JaNcRfUjXn2r";
 // Get username and room from URL
-const {username, room} = Qs.parse(location.search, {
+const { username, room } = Qs.parse(location.search, {
 	ignoreQueryPrefix: true,
 });
 
 const socket = io();
 
 // Join chatroom
-socket.emit("joinRoom", {username, room});
+socket.emit("joinRoom", { username, room });
 
 // Get room and users
-socket.on("roomUsers", ({room, users}) => {
+socket.on("roomUsers", ({ room, users }) => {
 	outputRoomName(room);
 	outputUsers(users);
 });
@@ -41,8 +41,10 @@ chatForm.addEventListener("submit", (e) => {
 		return false;
 	}
 
+	const message = CryptoJS.AES.encrypt(msg, aeskey).toString();
+
 	// Emit message to server
-	socket.emit("chatMessage", msg);
+	socket.emit("chatMessage", message);
 
 	// Clear input
 	e.target.elements.msg.value = "";

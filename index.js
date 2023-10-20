@@ -11,6 +11,10 @@ const {
 } = require("./structure/user");
 app.use(express.static("public"));
 
+const CryptoJS = require("crypto-js");
+
+var aeskey = "bQeThWmZq4t7w!z%C*F-JaNcRfUjXn2r";
+
 io.on("connection", (socket) => {
 	console.log("Connected");
 	socket.on("joinRoom", ({ username, room }) => {
@@ -20,11 +24,15 @@ io.on("connection", (socket) => {
 		let users = getAllUsers({ room });
 		io.to(room).emit("roomUsers", { room, users });
 		socket.on("chatMessage", (msg) => {
+			const message = CryptoJS.AES.decrypt(msg, aeskey).toString(
+				CryptoJS.enc.Utf8
+			);
+			console.log(message);
 			io.to(room).emit(
 				"message",
 				formateMessage({
 					username,
-					text: msg,
+					text: message,
 				})
 			);
 		});
@@ -51,7 +59,6 @@ io.on("connection", (socket) => {
 		const users = getAllUsers({ room });
 		io.to(user.room).emit("roomUsers", { room, users });
 
-		console.log("Disconnected");
 	});
 });
 

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Tashleef/chat-clone#readme",
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "express": "^4.18.2",
     "nodemon": "^2.0.22",
     "sequelize": "^6.31.0",
