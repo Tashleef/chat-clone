@@ -24,10 +24,11 @@ io.on("connection", (socket) => {
 		let users = getAllUsers({ room });
 		io.to(room).emit("roomUsers", { room, users });
 		socket.on("chatMessage", (msg) => {
+			console.log("message in server side before decryption", msg);
 			const message = CryptoJS.AES.decrypt(msg, aeskey).toString(
 				CryptoJS.enc.Utf8
 			);
-			console.log(message);
+			console.log("message in server side after decryption", message);
 			io.to(room).emit(
 				"message",
 				formateMessage({
@@ -58,7 +59,6 @@ io.on("connection", (socket) => {
 		);
 		const users = getAllUsers({ room });
 		io.to(user.room).emit("roomUsers", { room, users });
-
 	});
 });
 

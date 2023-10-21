@@ -21,7 +21,6 @@ socket.on("roomUsers", ({ room, users }) => {
 
 // Message from server
 socket.on("message", (message) => {
-	console.log(message);
 	outputMessage(message);
 
 	// Scroll down
@@ -40,9 +39,9 @@ chatForm.addEventListener("submit", (e) => {
 	if (!msg) {
 		return false;
 	}
-
+	console.log("message in client side before encryption", msg);
 	const message = CryptoJS.AES.encrypt(msg, aeskey).toString();
-
+	console.log("message in client side after encryption", message);
 	// Emit message to server
 	socket.emit("chatMessage", message);
 
